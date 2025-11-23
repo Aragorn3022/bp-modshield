@@ -303,11 +303,22 @@ Devvit.addTrigger({
   },
 });
 
-// Monitor mod actions to detect content reinstatement
+// Monitor mod actions to detect content reinstatement and flair changes
 Devvit.addTrigger({
   event: "ModAction",
   async onEvent(event, context) {
     try {
+      // Check if a moderator changed a post's flair
+      if (event.action === "editflair" && event.targetPost?.id) {
+        try {
+          const post = await context.reddit.getPostById(event.targetPost.id);
+          await checkRumorFlair(post, context);
+          console.log(`Checked rumor flair after mod flair edit on post ${event.targetPost.id}`);
+        } catch (error) {
+          console.error(`Error checking flair after mod action on post ${event.targetPost.id}:`, error);
+        }
+      }
+      
       // Check if a moderator approved/restored content that had a warning
       if (event.action === "approvelink" || event.action === "approvecomment") {
         const targetId = event.targetPost?.id || event.targetComment?.id;

@@ -101,21 +101,21 @@ export function checkBanThreshold(warningCount: number, lastBanLevel: number): {
       shouldBan: true,
       banDays: null, // permanent
       banLevel: 3,
-      message: "Permanently banned due to 26+ rule violations",
+      message: "You've exceeded our internal threshold of allowed removals in a specific time. For more details, please look at your previous removal messages.",
     };
   } else if (warningCount >= 12 && lastBanLevel < 2) {
     return {
       shouldBan: true,
       banDays: 28,
       banLevel: 2,
-      message: "Banned for 28 days due to 12+ rule violations",
+      message: "You've exceeded our internal threshold of allowed removals in a specific time. For more details, please look at your previous removal messages.",
     };
   } else if (warningCount >= 6 && lastBanLevel < 1) {
     return {
       shouldBan: true,
       banDays: 7,
       banLevel: 1,
-      message: "Banned for 7 days due to 6+ rule violations",
+      message: "You've exceeded our internal threshold of allowed removals in a specific time. For more details, please look at your previous removal messages.",
     };
   }
   
