@@ -21,52 +21,52 @@ export const DEFAULT_REMOVAL_REASONS: RemovalReason[] = [
   {
     id: "blackpink_related",
     label: 'Breaks "Keep things Blackpink related"',
-    reasonText: "Keep things Blackpink related - Please stay on topic of the group, it's members, fans and anything directly related to them.",
+    reasonText: "Keep things Blackpink related.",
   },
   {
     id: "respectful",
     label: 'Breaks "Stay respectful to everyone"',
-    reasonText: "Stay respectful to everyone - We want to keep things respectful for everyone, including the mods. State your opposite opinion in a respectful manner without insults, name-calling, or derogatory terms. Don't target people for their opinions, background, or identity. Don't participate in harassment towards anyone, including the family of Blackpink's members.",
+    reasonText: "Stay respectful to everyone.",
   },
   {
     id: "threats",
     label: 'Breaks "No threats of any kind"',
-    reasonText: "No threats of any kind - We will not stand for threats of any kind towards anyone, including sexual assault insinuations/jokes, or threats of body harm. Don't threaten to hurt someone, wish they did, or encourage self-harm or suicide.",
+    reasonText: "No threats of any kind.",
   },
   {
     id: "pii",
     label: 'Breaks "No sharing of PII"',
-    reasonText: "No sharing of PII (Personally Identifiable Information) - We don't allow sharing of personally identifiable information including phone numbers, home addresses, email addresses, private photos (school, houses, sexually explicit images), or real life names.",
+    reasonText: "No sharing of PII (Personally Identifiable Information).",
   },
   {
     id: "hate_speech",
     label: 'Breaks "No hate speech of any kind"',
-    reasonText: "No hate speech of any kind - We don't allow hate speech including misogyny and slut shaming, racism/xenophobia, or transphobia. Don't critique someone because of their gender or use terms solely like 'stripper' or 'bitch'. Share opinions based on style and presentation rather than personal attacks.",
+    reasonText: "No hate speech of any kind.",
   },
   {
     id: "body_shaming",
     label: 'Breaks "No body shaming"',
-    reasonText: "No body shaming of any kind - We don't allow body shaming about anyone including shaming characteristics someone was born with, making fun of someone's body shape, skin color, features, or jokes about weight.",
+    reasonText: "No body shaming of any kind.",
   },
   {
     id: "fan_behavior",
     label: 'Breaks "No fan behavior of any kind"',
-    reasonText: "No fan behavior of any kind - We don't allow comments/posts defending Blackpink or one of the members without any reason or logic. Only praising Blackpink falls under this. Critiquing and every-so-often praising is allowed.",
+    reasonText: "No fan behavior of any kind.",
   },
   {
     id: "blur_names",
     label: 'Breaks "Blur names in screenshots/recordings"',
-    reasonText: "Blur names in screenshots/recordings - Please censor the username or any identifying information when sharing screenshots/recordings, except for official accounts, celebrities, brands, companies, or publications.",
+    reasonText: "Blur names in screenshots/recordings.",
   },
   {
     id: "gatekeeping",
     label: 'Breaks "Don\'t make gate keeping or meta posts"',
-    reasonText: "Don't make gate keeping or meta posts/comments - We do not allow gatekeeping or attempts to control discussions. Don't try to dictate what topics or opinions are allowed, tell others what they can or cannot discuss, or police conversations. If you have concerns, reach out to the mods.",
+    reasonText: "Don't make gate keeping or meta posts/comments",
   },
   {
     id: "creepy",
     label: 'Breaks "No creepy or inappropriate behavior"',
-    reasonText: "No creepy or inappropriate behavior of any kind - Refrain from making inappropriate or creepy comments including saying you'd like a member as your partner/spouse, jokes about relationships, sexualizing or objectifying members, posting manipulated/suggestive images, or OnlyFans references.",
+    reasonText: "No creepy or inappropriate behavior of any kind ",
   },
   {
     id: "ai",
