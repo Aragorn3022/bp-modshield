@@ -1,6 +1,6 @@
 import { Devvit } from "@devvit/public-api";
 
-export const SUBREDDIT_NAME = "bp_modshield_dev";
+export const SUBREDDIT_NAME = "BLACKPINKSNARK";
 
 // Default blacklist - will add real terms later
 export const DEFAULT_BLACKLIST = ["test1", "test2"];
@@ -51,7 +51,10 @@ You will only see this message to your filtered out content every 5 days.
 export const MANUAL_REMOVAL_MESSAGE = (author: string, reasonText: string, activeWarnings: number, expiredWarnings: number) => `
 Greetings u/${author}!
 
-${reasonText}
+Your content was removed for the following reason:
+* ${reasonText}
+
+Please review our [subreddit rules](https://www.reddit.com/r/${SUBREDDIT_NAME}/about/rules) to ensure future participation follows them. Thank you.
 
 ---
 

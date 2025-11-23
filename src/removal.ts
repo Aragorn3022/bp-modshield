@@ -139,7 +139,7 @@ export async function handleCustomRemovalPost(
     await context.reddit.addModNote({
       subreddit: SUBREDDIT_NAME,
       user: post.authorName || "",
-      note: `Post removed: ${reason.label}`,
+      note: `Post removed by u/${moderator}: ${reason.label}`,
       redditId: post.id,
     });
 
@@ -217,7 +217,7 @@ export async function handleCustomRemovalComment(
     await context.reddit.addModNote({
       subreddit: SUBREDDIT_NAME,
       user: comment.authorName || "",
-      note: `Comment removed: ${reason.label}`,
+      note: `Comment removed by u/${moderator}: ${reason.label}`,
       redditId: comment.id,
     });
 

@@ -125,6 +125,16 @@ const nukePostForm = Devvit.createForm(
 );
 
 Devvit.addMenuItem({
+  label: "Remove with reason",
+  description: "Remove this comment with a custom removal reason",
+  location: "comment",
+  forUserType: "moderator",
+  onPress: (_, context) => {
+    context.ui.showForm(commentRemovalForm);
+  },
+});
+
+Devvit.addMenuItem({
   label: "Mop comments",
   description:
     "Remove this comment and all child comments. This might take a few seconds to run.",
@@ -464,8 +474,10 @@ const createCommentRemovalForm = (reasons: RemovalReason[]) => {
     },
     async ({ values }, context) => {
       try {
-        console.log(`Comment removal form submitted with reason: ${values.reason}`);
-        console.log(`Available reasons:`, DEFAULT_REMOVAL_REASONS.map(r => r.id));
+        console.log(`Comment removal form submitted with reason: "${values.reason}"`);
+        console.log(`Reason type: ${typeof values.reason}, length: ${values.reason?.length}`);
+        console.log(`First reason in array: "${DEFAULT_REMOVAL_REASONS[0].id}", type: ${typeof DEFAULT_REMOVAL_REASONS[0].id}`);
+        console.log(`Strict equality check: ${DEFAULT_REMOVAL_REASONS[0].id === values.reason}`);
         
         if (!context.commentId) {
           context.ui.showToast("Error: No comment ID found");
@@ -480,9 +492,11 @@ const createCommentRemovalForm = (reasons: RemovalReason[]) => {
           return;
         }
 
-        const selectedReason = DEFAULT_REMOVAL_REASONS.find((r) => r.id === values.reason);
+        // Try string comparison
+        const selectedReason = DEFAULT_REMOVAL_REASONS.find((r) => String(r.id) === String(values.reason));
         if (!selectedReason) {
-          console.error(`Could not find reason with id: ${values.reason}`);
+          console.error(`Could not find reason with id: "${values.reason}"`);
+          console.error(`All reasons:`, DEFAULT_REMOVAL_REASONS.map(r => `"${r.id}"`));
           context.ui.showToast("Error: Invalid removal reason");
           return;
         }
@@ -526,15 +540,5 @@ const commentRemovalForm = createCommentRemovalForm(DEFAULT_REMOVAL_REASONS);
 //     context.ui.showForm(postRemovalForm);
 //   },
 // });
-
-Devvit.addMenuItem({
-  label: "Remove with reason",
-  description: "Remove this comment with a custom removal reason",
-  location: "comment",
-  forUserType: "moderator",
-  onPress: (_, context) => {
-    context.ui.showForm(commentRemovalForm);
-  },
-});
 
 export default Devvit;
