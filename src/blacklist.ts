@@ -4,8 +4,9 @@ import {
   BLACKLIST_REMOVAL_MESSAGE,
   REDIS_KEYS,
   containsBlacklistedWord,
+  SUBREDDIT_NAME,
 } from "./config.js";
-import { getWarningCounts, addWarning } from "./warnings.js";
+import { getWarningCounts, addWarning, checkBanThreshold, applyBan, getUserWarnings } from "./warnings.js";
 
 // Check and handle blacklisted content in posts
 export async function checkBlacklistPost(
@@ -32,6 +33,29 @@ export async function checkBlacklistPost(
           moderator: "AutoMod",
           reason: "Blacklisted word",
         });
+        
+        // Check if user should be banned
+        const userWarningRecord = await getUserWarnings(context, post.authorName);
+        const warningRecord = await getWarningCounts(context, post.authorName);
+        console.log(`User ${post.authorName} has ${warningRecord.active} active warnings (lastBanLevel: ${userWarningRecord.lastBanLevel})`);
+        
+        const banInfo = checkBanThreshold(
+          warningRecord.active,
+          userWarningRecord.lastBanLevel
+        );
+        
+        console.log(`Ban check result for ${post.authorName}: shouldBan=${banInfo.shouldBan}, banDays=${banInfo.banDays}, banLevel=${banInfo.banLevel}`);
+
+        if (banInfo.shouldBan) {
+          await applyBan(
+            context,
+            post.authorName,
+            SUBREDDIT_NAME,
+            banInfo.banDays,
+            banInfo.message
+          );
+          console.log(`Banned u/${post.authorName}: ${banInfo.message}`);
+        }
       }
       
       // Get warning counts
@@ -83,6 +107,29 @@ export async function checkBlacklistComment(
           moderator: "AutoMod",
           reason: "Blacklisted word",
         });
+        
+        // Check if user should be banned
+        const userWarningRecord = await getUserWarnings(context, comment.authorName);
+        const warningRecord = await getWarningCounts(context, comment.authorName);
+        console.log(`User ${comment.authorName} has ${warningRecord.active} active warnings (lastBanLevel: ${userWarningRecord.lastBanLevel})`);
+        
+        const banInfo = checkBanThreshold(
+          warningRecord.active,
+          userWarningRecord.lastBanLevel
+        );
+        
+        console.log(`Ban check result for ${comment.authorName}: shouldBan=${banInfo.shouldBan}, banDays=${banInfo.banDays}, banLevel=${banInfo.banLevel}`);
+
+        if (banInfo.shouldBan) {
+          await applyBan(
+            context,
+            comment.authorName,
+            SUBREDDIT_NAME,
+            banInfo.banDays,
+            banInfo.message
+          );
+          console.log(`Banned u/${comment.authorName}: ${banInfo.message}`);
+        }
       }
       
       // Get warning counts

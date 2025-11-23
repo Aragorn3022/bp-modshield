@@ -129,13 +129,15 @@ export function checkBanThreshold(warningCount: number, lastBanLevel: number): {
 
 // Apply ban to user
 export async function applyBan(
-  context: Devvit.Context,
+  context: Devvit.Context | TriggerContext,
   username: string,
   subredditName: string,
   banDays: number | null,
   reason: string
 ): Promise<void> {
   try {
+    console.log(`Attempting to ban u/${username} for ${banDays || 'permanent'} days. Reason: ${reason}`);
+    
     if (banDays === null) {
       // Permanent ban
       await context.reddit.banUser({
@@ -144,6 +146,7 @@ export async function applyBan(
         reason,
         note: "Automatic ban by ModShield bot",
       });
+      console.log(`Successfully banned u/${username} permanently`);
     } else {
       // Temporary ban
       await context.reddit.banUser({
@@ -153,6 +156,7 @@ export async function applyBan(
         reason,
         note: "Automatic ban by ModShield bot",
       });
+      console.log(`Successfully banned u/${username} for ${banDays} days`);
     }
     
     // Update last ban level
@@ -163,9 +167,15 @@ export async function applyBan(
       const banInfo = checkBanThreshold(record.warnings.length, record.lastBanLevel);
       record.lastBanLevel = banInfo.banLevel;
       await context.redis.set(key, JSON.stringify(record));
+      console.log(`Updated ban level for u/${username} to ${banInfo.banLevel}`);
     }
   } catch (error) {
     console.error(`Failed to ban user ${username}:`, error);
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error(`Error message: ${error.message}`);
+      console.error(`Error stack: ${error.stack}`);
+    }
   }
 }
 

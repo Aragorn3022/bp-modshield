@@ -84,17 +84,7 @@ const nukeForm = Devvit.createForm(
   }
 );
 
-Devvit.addMenuItem({
-  label: "Mop comments",
-  description:
-    "Remove this comment and all child comments. This might take a few seconds to run.",
-  location: "comment",
-  forUserType: "moderator",
-  onPress: (_, context) => {
-    context.ui.showForm(nukeForm);
-  },
-});
-
+// Form for mopping all comments on a post
 const nukePostForm = Devvit.createForm(
   () => {
     return {
@@ -132,6 +122,27 @@ const nukePostForm = Devvit.createForm(
     );
   }
 );
+
+Devvit.addMenuItem({
+  label: "Mop comments",
+  description:
+    "Remove this comment and all child comments. This might take a few seconds to run.",
+  location: "comment",
+  forUserType: "moderator",
+  onPress: (_, context) => {
+    context.ui.showForm(nukeForm);
+  },
+});
+
+Devvit.addMenuItem({
+  label: "Remove with reason",
+  description: "Remove this post with a custom removal reason",
+  location: "post",
+  forUserType: "moderator",
+  onPress: (_, context) => {
+    context.ui.showForm(postRemovalForm);
+  },
+});
 
 Devvit.addMenuItem({
   label: "Mop post comments",
@@ -422,15 +433,15 @@ const createCommentRemovalForm = (reasons: RemovalReason[]) => {
 const postRemovalForm = createPostRemovalForm(DEFAULT_REMOVAL_REASONS);
 const commentRemovalForm = createCommentRemovalForm(DEFAULT_REMOVAL_REASONS);
 
-Devvit.addMenuItem({
-  label: "Remove with reason",
-  description: "Remove this post with a custom removal reason",
-  location: "post",
-  forUserType: "moderator",
-  onPress: (_, context) => {
-    context.ui.showForm(postRemovalForm);
-  },
-});
+// Devvit.addMenuItem({
+//   label: "Remove with reason",
+//   description: "Remove this post with a custom removal reason",
+//   location: "post",
+//   forUserType: "moderator",
+//   onPress: (_, context) => {
+//     context.ui.showForm(postRemovalForm);
+//   },
+// });
 
 Devvit.addMenuItem({
   label: "Remove with reason",

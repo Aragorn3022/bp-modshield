@@ -92,7 +92,7 @@ export const BAN_DURATIONS = {
 export const WARNING_EXPIRY_DAYS = 90;
 
 // Auto-approval settings
-export const AUTO_APPROVAL_INTERVAL_DAYS = 5; // Check and approve filtered content every 5 days
+export const AUTO_APPROVAL_INTERVAL_DAYS = 2; // Check and approve filtered content every 5 days
 
 // Redis keys
 export const REDIS_KEYS = {
