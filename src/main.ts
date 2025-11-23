@@ -17,6 +17,7 @@ import {
 } from "./participation.js";
 import { checkRumorFlair } from "./rumor.js";
 import { removeWarning } from "./warnings.js";
+import { clearAllMemory, clearUserMemory } from "./memory.js";
 
 Devvit.configure({
   redditAPI: true,
@@ -152,6 +153,79 @@ Devvit.addMenuItem({
   forUserType: "moderator",
   onPress: (_, context) => {
     context.ui.showForm(nukePostForm);
+  },
+});
+
+// Form for clearing all bot memory
+const clearMemoryForm = Devvit.createForm(
+  {
+    fields: [
+      {
+        name: "confirm",
+        label: "Type 'CONFIRM' to clear all bot memory",
+        type: "string",
+        required: true,
+      },
+    ],
+    title: "Clear All Bot Memory",
+    acceptLabel: "Clear Memory",
+    cancelLabel: "Cancel",
+  },
+  async ({ values }, context) => {
+    if (values.confirm !== "CONFIRM") {
+      context.ui.showToast("❌ Operation cancelled - confirmation text did not match");
+      return;
+    }
+
+    const result = await clearAllMemory(context);
+    context.ui.showToast(result.success ? `✅ ${result.message}` : `❌ ${result.message}`);
+  }
+);
+
+// Form for clearing user-specific memory
+const clearUserMemoryForm = Devvit.createForm(
+  {
+    fields: [
+      {
+        name: "username",
+        label: "Username (without u/)",
+        type: "string",
+        required: true,
+      },
+    ],
+    title: "Clear User Memory",
+    acceptLabel: "Clear",
+    cancelLabel: "Cancel",
+  },
+  async ({ values }, context) => {
+    if (!values.username) {
+      context.ui.showToast("❌ Username is required");
+      return;
+    }
+
+    const result = await clearUserMemory(context, values.username);
+    context.ui.showToast(result.success ? `✅ ${result.message}` : `❌ ${result.message}`);
+  }
+);
+
+// Menu items for memory management - accessible from any post
+Devvit.addMenuItem({
+  label: "🗑️ Clear all bot memory",
+  description: "Delete all warnings, notifications, and bot data",
+  location: "post",
+  forUserType: "moderator",
+  onPress: (_, context) => {
+    context.ui.showForm(clearMemoryForm);
+  },
+});
+
+Devvit.addMenuItem({
+  label: "🗑️ Clear user memory",
+  description: "Remove warnings and data for a specific user",
+  location: "post",
+  forUserType: "moderator",
+  onPress: (_, context) => {
+    context.ui.showForm(clearUserMemoryForm);
   },
 });
 
