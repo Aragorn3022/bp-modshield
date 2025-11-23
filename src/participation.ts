@@ -1,5 +1,5 @@
 import { Devvit, Post, Comment, TriggerContext } from "@devvit/public-api";
-import { REDIS_KEYS, DEFAULT_KARMA_REQUIREMENT, DEFAULT_ACCOUNT_AGE_REQUIREMENT, DEFAULT_RESTRICTIONS_ENABLED } from "./config.js";
+import { REDIS_KEYS, DEFAULT_KARMA_REQUIREMENT, DEFAULT_ACCOUNT_AGE_REQUIREMENT, DEFAULT_RESTRICTIONS_ENABLED, PARTICIPATION_REMOVAL_MESSAGE } from "./config.js";
 
 export type ParticipationRequirements = {
   minKarma: number;
@@ -69,11 +69,14 @@ export async function handleInsufficientPost(
 ): Promise<void> {
   try {
     await post.remove();
-    await post.addComment({
-      text: `Your post was automatically removed.\n\n${reason}\n\nPlease try again once you meet the requirements.`,
-    });
+    
+    if (post.authorName) {
+      await post.addComment({
+        text: PARTICIPATION_REMOVAL_MESSAGE(post.authorName, reason),
+      });
+    }
 
-    // Action is tracked via Reddit's mod actions log automatically
+    console.log(`Removed post ${post.id} - participation requirements not met: ${reason}`);
   } catch (error) {
     console.error(`Error handling insufficient post ${post.id}:`, error);
   }
@@ -87,11 +90,14 @@ export async function handleInsufficientComment(
 ): Promise<void> {
   try {
     await comment.remove();
-    await comment.reply({
-      text: `Your comment was automatically removed.\n\n${reason}\n\nPlease try again once you meet the requirements.`,
-    });
+    
+    if (comment.authorName) {
+      await comment.reply({
+        text: PARTICIPATION_REMOVAL_MESSAGE(comment.authorName, reason),
+      });
+    }
 
-    // Action is tracked via Reddit's mod actions log automatically
+    console.log(`Removed comment ${comment.id} - participation requirements not met: ${reason}`);
   } catch (error) {
     console.error(`Error handling insufficient comment ${comment.id}:`, error);
   }

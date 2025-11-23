@@ -79,6 +79,22 @@ The post's content is classified as a [rumor](https://en.wikipedia.org/wiki/Rumo
 *If you feel this was in error, or need more clarification, please don't hesitate to [modmail us](https://www.reddit.com/message/compose?to=r/${SUBREDDIT_NAME}). Thank you!*
 `.trim();
 
+export const PARTICIPATION_REMOVAL_MESSAGE = (author: string, reason: string) => `
+Greetings u/${author}!
+
+Your content was removed because your account does not meet our participation requirements:
+
+${reason}
+
+This is a common measure to prevent spam and maintain community quality. Please participate more on Reddit to meet these requirements.
+
+---
+
+*This action was performed automatically by a bot, not a human.*
+
+*If you feel this was in error, or need more clarification, please don't hesitate to [modmail us](https://www.reddit.com/message/compose?to=r/${SUBREDDIT_NAME}). Thank you!*
+`.trim();
+
 // Warning thresholds
 export const WARNING_THRESHOLDS = {
   FIRST_BAN: 6,    // 7 day ban
