@@ -97,6 +97,9 @@ export const WARNING_EXPIRY_DAYS = 90;
 // Auto-approval settings
 export const AUTO_APPROVAL_INTERVAL_DAYS = 2; // Check and approve filtered content every 5 days
 
+export const DEFAULT_KARMA_REQUIREMENT = 0; 
+export const DEFAULT_ACCOUNT_AGE_REQUIREMENT = 0; 
+export const DEFAULT_RESTRICTIONS_ENABLED = false; 
 // Redis keys
 export const REDIS_KEYS = {
   BLACKLIST: "blacklist",

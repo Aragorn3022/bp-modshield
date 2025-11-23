@@ -1,5 +1,5 @@
 import { Devvit, Post, Comment, TriggerContext } from "@devvit/public-api";
-import { REDIS_KEYS } from "./config.js";
+import { REDIS_KEYS, DEFAULT_KARMA_REQUIREMENT, DEFAULT_ACCOUNT_AGE_REQUIREMENT, DEFAULT_RESTRICTIONS_ENABLED } from "./config.js";
 
 export type ParticipationRequirements = {
   minKarma: number;
@@ -13,20 +13,20 @@ export async function checkParticipationRequirements(
   username: string
 ): Promise<{ allowed: boolean; reason?: string }> {
   try {
-    // Check if restrictions are enabled
+    // Check if restrictions are enabled (use default if not set in Redis)
     const enabledStr = await context.redis.get(REDIS_KEYS.RESTRICTIONS_ENABLED);
-    const enabled = enabledStr === "true";
+    const enabled = enabledStr ? enabledStr === "true" : DEFAULT_RESTRICTIONS_ENABLED;
 
     if (!enabled) {
       return { allowed: true };
     }
 
-    // Get requirements
+    // Get requirements (use defaults if not set in Redis)
     const karmaStr = await context.redis.get(REDIS_KEYS.KARMA_REQUIREMENT);
     const ageStr = await context.redis.get(REDIS_KEYS.ACCOUNT_AGE_REQUIREMENT);
 
-    const minKarma = karmaStr ? parseInt(karmaStr, 10) : 0;
-    const minAccountAge = ageStr ? parseInt(ageStr, 10) : 0;
+    const minKarma = karmaStr ? parseInt(karmaStr, 10) : DEFAULT_KARMA_REQUIREMENT;
+    const minAccountAge = ageStr ? parseInt(ageStr, 10) : DEFAULT_ACCOUNT_AGE_REQUIREMENT;
 
     // Get user info
     const user = await context.reddit.getUserById(username);
