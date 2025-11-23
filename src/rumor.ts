@@ -1,17 +1,22 @@
 import { Devvit, Post, TriggerContext } from "@devvit/public-api";
 import { RUMOR_FLAIR_MESSAGE } from "./config.js";
 
-// Check if post flair contains "rumor" and add sticky comment
+// Check if post flair or title contains "rumor" and add sticky comment
 export async function checkRumorFlair(
   post: Post,
   context: Devvit.Context | TriggerContext
 ): Promise<void> {
   try {
     const flair = post.flair?.text?.toLowerCase() || "";
+    const title = post.title?.toLowerCase() || "";
     const key = `rumor_comment:${post.id}`;
 
-    if (flair.includes("rumor")) {
-      console.log(`Rumor flair detected on post ${post.id}`);
+    // Check if either flair or title contains "rumor" or "rumour"
+    const hasRumorInFlair = flair.includes("rumor") || flair.includes("rumour");
+    const hasRumorInTitle = title.includes("rumor") || title.includes("rumour");
+
+    if (hasRumorInFlair || hasRumorInTitle) {
+      console.log(`Rumor detected on post ${post.id} (flair: ${hasRumorInFlair}, title: ${hasRumorInTitle})`);
 
       // Check if we already commented on this post
       const alreadyCommented = await context.redis.get(key);
@@ -37,12 +42,12 @@ export async function checkRumorFlair(
 
       console.log(`Added rumor warning to post ${post.id}`);
     } else {
-      // Flair does not contain "rumor" - clear the Redis key if it exists
-      // This allows the bot to comment again if the rumor flair is re-added
+      // Neither flair nor title contains "rumor" - clear the Redis key if it exists
+      // This allows the bot to comment again if the rumor flair/title is re-added
       const hadKey = await context.redis.get(key);
       if (hadKey) {
         await context.redis.del(key);
-        console.log(`Cleared rumor comment flag for post ${post.id} (flair removed)`);
+        console.log(`Cleared rumor comment flag for post ${post.id} (rumor text removed)`);
       }
     }
   } catch (error) {

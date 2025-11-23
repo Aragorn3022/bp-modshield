@@ -384,6 +384,11 @@ const createPostRemovalForm = (reasons: RemovalReason[]) => {
     },
     async ({ values }, context) => {
       try {
+        console.log(`Post removal form submitted with reason: "${values.reason}"`);
+        console.log(`Reason type: ${typeof values.reason}, length: ${values.reason?.length}`);
+        console.log(`First reason in array: "${DEFAULT_REMOVAL_REASONS[0].id}", type: ${typeof DEFAULT_REMOVAL_REASONS[0].id}`);
+        console.log(`Strict equality check: ${DEFAULT_REMOVAL_REASONS[0].id === values.reason}`);
+        
         if (!context.postId) {
           context.ui.showToast("Error: No post ID found");
           return;
@@ -397,8 +402,11 @@ const createPostRemovalForm = (reasons: RemovalReason[]) => {
           return;
         }
 
-        const selectedReason = reasons.find((r) => r.id === values.reason);
+        // Try string comparison
+        const selectedReason = DEFAULT_REMOVAL_REASONS.find((r) => String(r.id) === String(values.reason));
         if (!selectedReason) {
+          console.error(`Could not find reason with id: "${values.reason}"`);
+          console.error(`All reasons:`, DEFAULT_REMOVAL_REASONS.map(r => `"${r.id}"`));
           context.ui.showToast("Error: Invalid removal reason");
           return;
         }
@@ -456,6 +464,9 @@ const createCommentRemovalForm = (reasons: RemovalReason[]) => {
     },
     async ({ values }, context) => {
       try {
+        console.log(`Comment removal form submitted with reason: ${values.reason}`);
+        console.log(`Available reasons:`, DEFAULT_REMOVAL_REASONS.map(r => r.id));
+        
         if (!context.commentId) {
           context.ui.showToast("Error: No comment ID found");
           return;
@@ -469,8 +480,9 @@ const createCommentRemovalForm = (reasons: RemovalReason[]) => {
           return;
         }
 
-        const selectedReason = reasons.find((r) => r.id === values.reason);
+        const selectedReason = DEFAULT_REMOVAL_REASONS.find((r) => r.id === values.reason);
         if (!selectedReason) {
+          console.error(`Could not find reason with id: ${values.reason}`);
           context.ui.showToast("Error: Invalid removal reason");
           return;
         }
