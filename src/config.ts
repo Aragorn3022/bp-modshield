@@ -3,7 +3,7 @@ import { Devvit } from "@devvit/public-api";
 export const SUBREDDIT_NAME = "BLACKPINKSNARK";
 
 // Default blacklist - will add real terms later
-export const DEFAULT_BLACKLIST = ["test1", "test2"];
+export const DEFAULT_BLACKLIST = ["slut","pornstar","porn star","mom","mother","mum","ladyboy","lady boy","faggot","fag","nigger","tranny","whore","vagina","coochie","child","kid"];
 
 export const BLACKLIST_REMOVAL_MESSAGE = (author: string, activeWarnings: number, expiredWarnings: number) => `
 Greetings u/${author}!

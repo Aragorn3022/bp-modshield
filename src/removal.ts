@@ -18,63 +18,72 @@ export type RemovalReason = {
 
 // Default removal reasons based on subreddit rules
 export const DEFAULT_REMOVAL_REASONS: RemovalReason[] = [
-  {
-    id: "blackpink_related",
-    label: 'Breaks "Keep things Blackpink related"',
-    reasonText: "Keep things Blackpink related.",
-  },
-  {
-    id: "respectful",
-    label: 'Breaks "Stay respectful to everyone"',
-    reasonText: "Stay respectful to everyone.",
-  },
-  {
-    id: "threats",
-    label: 'Breaks "No threats of any kind"',
-    reasonText: "No threats of any kind.",
-  },
-  {
-    id: "pii",
-    label: 'Breaks "No sharing of PII"',
-    reasonText: "No sharing of PII (Personally Identifiable Information).",
-  },
-  {
-    id: "hate_speech",
-    label: 'Breaks "No hate speech of any kind"',
-    reasonText: "No hate speech of any kind.",
-  },
-  {
-    id: "body_shaming",
-    label: 'Breaks "No body shaming"',
-    reasonText: "No body shaming of any kind.",
-  },
-  {
-    id: "fan_behavior",
-    label: 'Breaks "No fan behavior of any kind"',
-    reasonText: "No fan behavior of any kind.",
-  },
-  {
-    id: "blur_names",
-    label: 'Breaks "Blur names in screenshots/recordings"',
-    reasonText: "Blur names in screenshots/recordings.",
-  },
-  {
-    id: "gatekeeping",
-    label: 'Breaks "Don\'t make gate keeping or meta posts"',
-    reasonText: "Don't make gate keeping or meta posts/comments",
-  },
-  {
-    id: "creepy",
-    label: 'Breaks "No creepy or inappropriate behavior"',
-    reasonText: "No creepy or inappropriate behavior of any kind ",
-  },
-  {
-    id: "ai",
-    label: 'Breaks "No AI"',
-    reasonText: "No AI content - We don't allow AI-generated content in posts or comments.",
-  },
+{
+id: "blackpink_related",
+label: 'Breaks "Keep things Blackpink related"',
+reasonText: "Keep things Blackpink related.",
+},
+{
+id: "respectful",
+label: 'Breaks "Stay respectful to everyone"',
+reasonText: "Stay respectful to everyone.",
+},
+{
+id: "threats",
+label: 'Breaks "No threats of any kind"',
+reasonText: "No threats of any kind.",
+},
+{
+id: "pii",
+label: 'Breaks "No sharing of PII"',
+reasonText: "No sharing of PII (Personally Identifiable Information).",
+},
+{
+id: "hate_speech",
+label: 'Breaks "No hate speech of any kind"',
+reasonText: "No hate speech of any kind.",
+},
+{
+id: "body_shaming",
+label: 'Breaks "No body shaming"',
+reasonText: "No body shaming of any kind.",
+},
+{
+id: "fan_behavior",
+label: 'Breaks "No fan behavior of any kind"',
+reasonText: "No fan behavior of any kind.",
+},
+{
+id: "blur_names",
+label: 'Breaks "Blur names in screenshots/recordings"',
+reasonText: "Blur names in screenshots/recordings.",
+},
+{
+id: "gatekeeping",
+label: 'Breaks "Don\'t make gate keeping or meta posts"',
+reasonText: "Don't make gate keeping or meta posts/comments",
+},
+{
+id: "creepy",
+label: 'Breaks "No creepy or inappropriate behavior"',
+reasonText: "No creepy or inappropriate behavior of any kind ",
+},
+{
+id: "ai",
+label: 'Breaks "No AI"',
+reasonText: "No AI content on this subreddit.",
+},
+{
+id: "no_spam",
+label: 'Breaks "no spam"',
+reasonText: "No spam content on this subreddit.",
+},
+{
+id: "recently_posted",
+label: 'Breaks "repetitive content"',
+reasonText: "Please no repetitive content on this subreddit. 5 different posts about the same topic is not necessary.",
+},
 ];
-
 // Handle custom removal of a post
 export async function handleCustomRemovalPost(
   post: Post,
