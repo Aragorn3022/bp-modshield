@@ -97,9 +97,9 @@ This is a common measure to prevent spam and maintain community quality. Please 
 
 // Warning thresholds
 export const WARNING_THRESHOLDS = {
-  FIRST_BAN: 6,    // 7 day ban
-  SECOND_BAN: 12,  // 28 day ban
-  PERMA_BAN: 26,   // permanent ban
+  FIRST_BAN: 7,    // 7 day ban
+  SECOND_BAN: 28,  // 28 day ban
+  PERMA_BAN: 90,   // permanent ban
 } as const;
 
 export const BAN_DURATIONS = {
