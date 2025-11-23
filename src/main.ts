@@ -290,31 +290,26 @@ Devvit.addTrigger({
   },
 });
 
-// Monitor post updates (for flair changes)
+// Monitor post flair updates
 Devvit.addTrigger({
-  event: "PostUpdate",
+  event: "PostFlairUpdate",
   async onEvent(event, context) {
     try {
+      console.log(`PostFlairUpdate event received for post ${event.post?.id}`);
       const post = await context.reddit.getPostById(event.post!.id);
+      console.log(`Post fetched, flair text: ${post.flair?.text || 'none'}`);
       await checkRumorFlair(post, context);
     } catch (error) {
-      console.error("Error in PostUpdate trigger:", error);
+      console.error("Error in PostFlairUpdate trigger:", error);
     }
   },
 });
 
-// Monitor mod actions to detect content reinstatement and flair changes
+// Monitor mod actions to detect content reinstatement
 Devvit.addTrigger({
   event: "ModAction",
   async onEvent(event, context) {
     try {
-      // Check if a moderator changed a post's flair
-      if (event.action === "editflair" && event.targetPost?.id) {
-        const post = await context.reddit.getPostById(event.targetPost.id);
-        await checkRumorFlair(post, context);
-        console.log(`Checked rumor flair after mod flair edit on post ${event.targetPost.id}`);
-      }
-      
       // Check if a moderator approved/restored content that had a warning
       if (event.action === "approvelink" || event.action === "approvecomment") {
         const targetId = event.targetPost?.id || event.targetComment?.id;
