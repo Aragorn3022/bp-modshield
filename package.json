@@ -5,10 +5,10 @@
   "license": "BSD-3-Clause",
   "type": "module",
   "scripts": {
-    "deploy": "devvit upload",
-    "dev": "dotenv -e .env -- devvit playtest",
-    "login": "devvit login",
-    "launch": "devvit publish",
+    "deploy": "npx devvit upload",
+    "dev": "dotenv -e .env -- npx devvit playtest",
+    "login": "npx devvit login",
+    "launch": "npx devvit publish",
     "type-check": "tsc --build"
   },
   "dependencies": {
