@@ -108,7 +108,8 @@ export async function handleCustomRemovalPost(
           post.authorName,
           SUBREDDIT_NAME,
           banInfo.banDays,
-          banInfo.message
+          banInfo.message,
+          banInfo.banLevel
         );
         console.log(`Banned u/${post.authorName}: ${banInfo.message}`);
       }
@@ -185,7 +186,8 @@ export async function handleCustomRemovalComment(
           comment.authorName,
           SUBREDDIT_NAME,
           banInfo.banDays,
-          banInfo.message
+          banInfo.message,
+          banInfo.banLevel
         );
         console.log(`Banned u/${comment.authorName}: ${banInfo.message}`);
       }

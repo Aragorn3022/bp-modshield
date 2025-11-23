@@ -127,13 +127,14 @@ export function checkBanThreshold(warningCount: number, lastBanLevel: number): {
   };
 }
 
-// Apply ban to user
+// Apply ban to user and update ban level
 export async function applyBan(
   context: Devvit.Context | TriggerContext,
   username: string,
   subredditName: string,
   banDays: number | null,
-  reason: string
+  reason: string,
+  newBanLevel: number
 ): Promise<void> {
   try {
     console.log(`Attempting to ban u/${username} for ${banDays || 'permanent'} days. Reason: ${reason}`);
@@ -164,10 +165,9 @@ export async function applyBan(
     const existing = await context.redis.get(key);
     if (existing) {
       const record: UserWarningRecord = JSON.parse(existing);
-      const banInfo = checkBanThreshold(record.warnings.length, record.lastBanLevel);
-      record.lastBanLevel = banInfo.banLevel;
+      record.lastBanLevel = newBanLevel;
       await context.redis.set(key, JSON.stringify(record));
-      console.log(`Updated ban level for u/${username} to ${banInfo.banLevel}`);
+      console.log(`Updated ban level for u/${username} to ${newBanLevel}`);
     }
   } catch (error) {
     console.error(`Failed to ban user ${username}:`, error);

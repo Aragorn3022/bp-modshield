@@ -52,7 +52,8 @@ export async function checkBlacklistPost(
             post.authorName,
             SUBREDDIT_NAME,
             banInfo.banDays,
-            banInfo.message
+            banInfo.message,
+            banInfo.banLevel
           );
           console.log(`Banned u/${post.authorName}: ${banInfo.message}`);
         }
@@ -126,7 +127,8 @@ export async function checkBlacklistComment(
             comment.authorName,
             SUBREDDIT_NAME,
             banInfo.banDays,
-            banInfo.message
+            banInfo.message,
+            banInfo.banLevel
           );
           console.log(`Banned u/${comment.authorName}: ${banInfo.message}`);
         }

@@ -1,6 +1,6 @@
 import { Devvit } from "@devvit/public-api";
 
-export const SUBREDDIT_NAME = "BLACKPINKSNARK";
+export const SUBREDDIT_NAME = "bp_modshield_dev";
 
 // Default blacklist - will add real terms later
 export const DEFAULT_BLACKLIST = ["test1", "test2"];
