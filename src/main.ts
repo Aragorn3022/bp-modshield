@@ -310,13 +310,9 @@ Devvit.addTrigger({
     try {
       // Check if a moderator changed a post's flair
       if (event.action === "editflair" && event.targetPost?.id) {
-        try {
-          const post = await context.reddit.getPostById(event.targetPost.id);
-          await checkRumorFlair(post, context);
-          console.log(`Checked rumor flair after mod flair edit on post ${event.targetPost.id}`);
-        } catch (error) {
-          console.error(`Error checking flair after mod action on post ${event.targetPost.id}:`, error);
-        }
+        const post = await context.reddit.getPostById(event.targetPost.id);
+        await checkRumorFlair(post, context);
+        console.log(`Checked rumor flair after mod flair edit on post ${event.targetPost.id}`);
       }
       
       // Check if a moderator approved/restored content that had a warning
@@ -325,22 +321,18 @@ Devvit.addTrigger({
         
         // Get the actual content to find the author
         if (targetId) {
-          try {
-            if (event.targetPost?.id) {
-              const post = await context.reddit.getPostById(event.targetPost.id);
-              if (post.authorName) {
-                await removeWarning(context, post.authorName, targetId);
-                console.log(`Removed warning for u/${post.authorName} - content ${targetId} was reinstated`);
-              }
-            } else if (event.targetComment?.id) {
-              const comment = await context.reddit.getCommentById(event.targetComment.id);
-              if (comment.authorName) {
-                await removeWarning(context, comment.authorName, targetId);
-                console.log(`Removed warning for u/${comment.authorName} - content ${targetId} was reinstated`);
-              }
+          if (event.targetPost?.id) {
+            const post = await context.reddit.getPostById(event.targetPost.id);
+            if (post.authorName) {
+              await removeWarning(context, post.authorName, targetId);
+              console.log(`Removed warning for u/${post.authorName} - content ${targetId} was reinstated`);
             }
-          } catch (error) {
-            console.error("Error processing approval:", error);
+          } else if (event.targetComment?.id) {
+            const comment = await context.reddit.getCommentById(event.targetComment.id);
+            if (comment.authorName) {
+              await removeWarning(context, comment.authorName, targetId);
+              console.log(`Removed warning for u/${comment.authorName} - content ${targetId} was reinstated`);
+            }
           }
         }
       }

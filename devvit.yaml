@@ -1,1 +1,21 @@
 name: bp-modshield
+
+permissions:
+  - modLog
+  - read
+  - posts
+  - comments
+  - modPosts
+  - modComments
+  - modConfig
+  - identity
+  - wiki
+  - flair
+  - editFlairs
+  - manageUsers
+  - modMail
+
+app:
+  clientPermissions:
+    - read
+    - modLog

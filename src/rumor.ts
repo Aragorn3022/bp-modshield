@@ -8,15 +8,16 @@ export async function checkRumorFlair(
 ): Promise<void> {
   try {
     const flair = post.flair?.text?.toLowerCase() || "";
+    const key = `rumor_comment:${post.id}`;
 
     if (flair.includes("rumor")) {
       console.log(`Rumor flair detected on post ${post.id}`);
 
       // Check if we already commented on this post
-      const key = `rumor_comment:${post.id}`;
       const alreadyCommented = await context.redis.get(key);
 
       if (alreadyCommented) {
+        console.log(`Already commented on post ${post.id}, skipping`);
         return; // Already added comment
       }
 
@@ -35,6 +36,14 @@ export async function checkRumorFlair(
       });
 
       console.log(`Added rumor warning to post ${post.id}`);
+    } else {
+      // Flair does not contain "rumor" - clear the Redis key if it exists
+      // This allows the bot to comment again if the rumor flair is re-added
+      const hadKey = await context.redis.get(key);
+      if (hadKey) {
+        await context.redis.del(key);
+        console.log(`Cleared rumor comment flag for post ${post.id} (flair removed)`);
+      }
     }
   } catch (error) {
     console.error(`Error checking rumor flair for post ${post.id}:`, error);
