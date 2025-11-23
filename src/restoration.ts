@@ -2,11 +2,32 @@ import { Devvit, Post, Comment, TriggerContext } from "@devvit/public-api";
 import {
   RESTORATION_MESSAGE,
   REDIS_KEYS,
+  AUTO_APPROVAL_INTERVAL_DAYS,
 } from "./config.js";
 import {
   canSendNotification,
   markNotificationSent,
 } from "./warnings.js";
+
+// Check if enough time has passed since last auto-approval
+async function canAutoApprove(context: TriggerContext | Devvit.Context): Promise<boolean> {
+  const lastApprovalStr = await context.redis.get(REDIS_KEYS.LAST_AUTO_APPROVAL);
+  
+  if (!lastApprovalStr) {
+    return true; // First time, allow approval
+  }
+  
+  const lastApprovalTime = parseInt(lastApprovalStr, 10);
+  const intervalMs = AUTO_APPROVAL_INTERVAL_DAYS * 24 * 60 * 60 * 1000;
+  const timeSinceLastApproval = Date.now() - lastApprovalTime;
+  
+  return timeSinceLastApproval >= intervalMs;
+}
+
+// Mark that we performed auto-approval
+async function markAutoApprovalDone(context: TriggerContext | Devvit.Context): Promise<void> {
+  await context.redis.set(REDIS_KEYS.LAST_AUTO_APPROVAL, Date.now().toString());
+}
 
 // Check if content was removed by Reddit (spam filter) and restore it
 export async function checkAndRestorePost(
@@ -24,14 +45,20 @@ export async function checkAndRestorePost(
 
     // Check if post is removed
     if (post.removed) {
-      // Get the post's removal metadata to determine who removed it
-      // If it's spam filtered by Reddit, approve it
-      // Note: We can't directly check who removed it, but we can check if it's in modqueue
-      // Posts removed by Reddit spam filter typically show up in modqueue
+      // Check if we can auto-approve (5-6 day interval)
+      const canApprove = await canAutoApprove(context);
       
-      // For safety, we'll approve it and log
+      if (!canApprove) {
+        console.log(`Skipping auto-approval for post ${post.id} - waiting for approval interval`);
+        return;
+      }
+      
+      // Approve the post
       await post.approve();
       console.log(`Auto-approved post ${post.id} by u/${post.authorName}`);
+      
+      // Mark that we performed auto-approval
+      await markAutoApprovalDone(context);
 
       // Check if we should notify the user
       if (await canSendNotification(context, post.authorName || "")) {
@@ -68,9 +95,20 @@ export async function checkAndRestoreComment(
 
     // Check if comment is removed
     if (comment.removed) {
+      // Check if we can auto-approve (5-6 day interval)
+      const canApprove = await canAutoApprove(context);
+      
+      if (!canApprove) {
+        console.log(`Skipping auto-approval for comment ${comment.id} - waiting for approval interval`);
+        return;
+      }
+      
       // Approve it
       await comment.approve();
       console.log(`Auto-approved comment ${comment.id} by u/${comment.authorName}`);
+      
+      // Mark that we performed auto-approval
+      await markAutoApprovalDone(context);
 
       // Check if we should notify the user
       if (await canSendNotification(context, comment.authorName || "")) {

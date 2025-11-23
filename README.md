@@ -5,7 +5,7 @@ A comprehensive moderation bot for r/BLACKPINKSNARK built with the Devvit framew
 ## Features
 
 1. **Word Blacklist Filtering** - Automatically removes posts/comments with blacklisted words
-2. **Reddit Spam Restoration** - Auto-approves Reddit-filtered content with user notifications
+2. **Reddit Spam Restoration** - Auto-approves Reddit-filtered content every 5 days with user notifications
 3. **Custom Mod Removal Reasons** - Menu options for moderators with custom messages
 4. **Warning System** - Automatic escalating bans (6/12/26 warnings)
 5. **Participation Restrictions** - Configurable karma and account age minimums
@@ -136,7 +136,7 @@ export const BAN_DURATIONS = {
 export const WARNING_EXPIRY_DAYS = 90; // Warnings expire after 90 days
 ```
 
-### 5. Changing Subreddit Name
+### 6. Changing Subreddit Name
 
 Edit `src/config.ts`:
 
@@ -146,7 +146,22 @@ export const SUBREDDIT_NAME = "BLACKPINKSNARK";
 
 This updates all message templates automatically.
 
-### 6. Customizing Messages
+### 7. Adjusting Auto-Approval Interval
+
+The bot automatically approves Reddit-filtered content every 5 days by default. To change this:
+
+Edit `src/config.ts`:
+
+```typescript
+export const AUTO_APPROVAL_INTERVAL_DAYS = 5; // Change to 6, 7, etc.
+```
+
+Then redeploy:
+```bash
+npm run deploy
+```
+
+### 8. Customizing Messages
 
 All bot messages are in `src/config.ts`:
 - `BLACKLIST_REMOVAL_MESSAGE` - Sent when blacklisted word detected
@@ -216,7 +231,7 @@ src/
 
 These run automatically without moderator action:
 - Blacklist filtering on new posts/comments
-- Spam restoration (approves Reddit-filtered content)
+- Spam restoration (approves Reddit-filtered content every 5 days)
 - Rumor flair warnings (on posts with "rumor" in flair)
 - Participation restrictions (if enabled)
 - Automatic bans at warning thresholds
@@ -235,6 +250,7 @@ These run automatically without moderator action:
 | `last_notif:{username}` | Last notification timestamp | Auto-managed |
 | `processed:{id}` | Processed content tracking | Auto-managed |
 | `rumor_comment:{post_id}` | Rumor comment tracking | Auto-managed |
+| `last_auto_approval` | Last auto-approval timestamp | Auto-managed |
 
 ---
 
@@ -251,9 +267,10 @@ These run automatically without moderator action:
 - Check Redis key: `warnings:{username}`
 
 ### Spam restoration not working
-- Feature only restores Reddit's spam filter removals
+- Feature only restores Reddit's spam filter removals every 5 days
 - Won't restore moderator removals
 - Check if content was actually spam-filtered vs manually removed
+- Check Redis key `last_auto_approval` for last run time
 
 ### Participation restrictions not working
 - Check `restrictions_enabled` is set to `"true"`

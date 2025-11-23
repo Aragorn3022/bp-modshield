@@ -91,6 +91,9 @@ export const BAN_DURATIONS = {
 
 export const WARNING_EXPIRY_DAYS = 90;
 
+// Auto-approval settings
+export const AUTO_APPROVAL_INTERVAL_DAYS = 5; // Check and approve filtered content every 5 days
+
 // Redis keys
 export const REDIS_KEYS = {
   BLACKLIST: "blacklist",
@@ -101,6 +104,7 @@ export const REDIS_KEYS = {
   RESTRICTIONS_ENABLED: "restrictions_enabled",
   REMOVAL_REASONS: "removal_reasons",
   PROCESSED_ITEMS: (id: string) => `processed:${id}`, // Track already processed content
+  LAST_AUTO_APPROVAL: "last_auto_approval", // Track last time auto-approval ran
 } as const;
 
 // Helper to check if content contains blacklisted words
