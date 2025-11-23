@@ -6,7 +6,7 @@ export const SUBREDDIT_NAME = "BLACKPINKSNARK";
 export const DEFAULT_BLACKLIST = ["test1", "test2"];
 
 export const BLACKLIST_REMOVAL_MESSAGE = (author: string, activeWarnings: number, expiredWarnings: number) => `
-Greetings ${author}!
+Greetings u/${author}!
 
 Thank you for posting to r/${SUBREDDIT_NAME}.
 
@@ -24,7 +24,7 @@ You have **${activeWarnings}** removal(s) active${expiredWarnings > 0 ? ` and **
 `.trim();
 
 export const RESTORATION_MESSAGE = (author: string, contentType: "comment" | "post") => `
-Greetings ${author}!
+Greetings u/${author}!
 
 Your ${contentType} was (not anymore!) filtered by Reddit. This can happen for several different reasons, including but not limited to:
 
@@ -49,7 +49,7 @@ You will only see this message to your filtered out content every 5 days.
 `.trim();
 
 export const MANUAL_REMOVAL_MESSAGE = (author: string, reasonText: string, activeWarnings: number, expiredWarnings: number) => `
-Greetings ${author}!
+Greetings u/${author}!
 
 ${reasonText}
 
