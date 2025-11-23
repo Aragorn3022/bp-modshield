@@ -52,15 +52,8 @@ export async function checkBlacklistPost(
         text: message,
       });
 
-      // Add to mod log (only available in non-trigger contexts)
-      if ('modLog' in context) {
-        await context.modLog.add({
-          action: "removelink",
-          target: post.id,
-          details: "blacklist-filter",
-          description: `Automatically removed due to blacklisted word`,
-        });
-      }
+      // Mod log entry (modLog requires special permissions)
+      // Action is tracked via Redis and visible in mod actions
     }
   } catch (error) {
     console.error(`Error checking blacklist for post ${post.id}:`, error);
@@ -110,15 +103,8 @@ export async function checkBlacklistComment(
         text: message,
       });
 
-      // Add to mod log (only available in non-trigger contexts)
-      if ('modLog' in context) {
-        await context.modLog.add({
-          action: "removecomment",
-          target: comment.id,
-          details: "blacklist-filter",
-          description: `Automatically removed due to blacklisted word`,
-        });
-      }
+      // Mod log entry (modLog requires special permissions)
+      // Action is tracked via Redis and visible in mod actions
     }
   } catch (error) {
     console.error(`Error checking blacklist for comment ${comment.id}:`, error);

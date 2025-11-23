@@ -21,7 +21,6 @@ import { removeWarning } from "./warnings.js";
 Devvit.configure({
   redditAPI: true,
   redis: true,
-  modLog: true,
 });
 
 const nukeFields: FormField[] = [

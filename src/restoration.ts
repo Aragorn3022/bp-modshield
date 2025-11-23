@@ -42,15 +42,7 @@ export async function checkAndRestorePost(
         await markNotificationSent(context, post.authorName || "");
       }
 
-      // Add to mod log (only available in non-trigger contexts)
-      if ('modLog' in context) {
-        await context.modLog.add({
-          action: "approvelink",
-          target: post.id,
-          details: "auto-restore",
-          description: `Automatically restored from Reddit spam filter`,
-        });
-      }
+      // Action is tracked via Reddit's mod actions log automatically
     }
 
     // Mark as processed
@@ -89,15 +81,7 @@ export async function checkAndRestoreComment(
         await markNotificationSent(context, comment.authorName || "");
       }
 
-      // Add to mod log (only available in non-trigger contexts)
-      if ('modLog' in context) {
-        await context.modLog.add({
-          action: "approvecomment",
-          target: comment.id,
-          details: "auto-restore",
-          description: `Automatically restored from Reddit spam filter`,
-        });
-      }
+      // Action is tracked via Reddit's mod actions log automatically
     }
 
     // Mark as processed

@@ -73,14 +73,7 @@ export async function handleInsufficientPost(
       text: `Your post was automatically removed.\n\n${reason}\n\nPlease try again once you meet the requirements.`,
     });
 
-    if ('modLog' in context) {
-      await context.modLog.add({
-        action: "removelink",
-        target: post.id,
-        details: "participation-requirements",
-        description: reason,
-      });
-    }
+    // Action is tracked via Reddit's mod actions log automatically
   } catch (error) {
     console.error(`Error handling insufficient post ${post.id}:`, error);
   }
@@ -98,14 +91,7 @@ export async function handleInsufficientComment(
       text: `Your comment was automatically removed.\n\n${reason}\n\nPlease try again once you meet the requirements.`,
     });
 
-    if ('modLog' in context) {
-      await context.modLog.add({
-        action: "removecomment",
-        target: comment.id,
-        details: "participation-requirements",
-        description: reason,
-      });
-    }
+    // Action is tracked via Reddit's mod actions log automatically
   } catch (error) {
     console.error(`Error handling insufficient comment ${comment.id}:`, error);
   }

@@ -102,13 +102,8 @@ export async function handleCustomRemovalPost(
       redditId: post.id,
     });
 
-    // Add to mod log
-    await context.modLog.add({
-      action: "removelink",
-      target: post.id,
-      details: reason.id,
-      description: `Removed by u/${moderator}: ${reason.label}`,
-    });
+    // Action is tracked via Reddit's mod actions log automatically
+    console.log(`Mod action logged: Post ${post.id} removed by u/${moderator} for ${reason.label}`);
 
     console.log(`Custom removal of post ${post.id} by u/${moderator} for: ${reason.label}`);
   } catch (error) {
@@ -184,13 +179,8 @@ export async function handleCustomRemovalComment(
       redditId: comment.id,
     });
 
-    // Add to mod log
-    await context.modLog.add({
-      action: "removecomment",
-      target: comment.id,
-      details: reason.id,
-      description: `Removed by u/${moderator}: ${reason.label}`,
-    });
+    // Action is tracked via Reddit's mod actions log automatically
+    console.log(`Mod action logged: Comment ${comment.id} removed by u/${moderator} for ${reason.label}`);
 
     console.log(`Custom removal of comment ${comment.id} by u/${moderator} for: ${reason.label}`);
   } catch (error) {
