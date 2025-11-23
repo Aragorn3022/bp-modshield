@@ -1,0 +1,213 @@
+import { Devvit, TriggerContext } from "@devvit/public-api";
+
+export type UserWarning = {
+  timestamp: number;
+  postId?: string;
+  commentId?: string;
+  moderator: string;
+  reason: string;
+};
+
+export type UserWarningRecord = {
+  warnings: UserWarning[];
+  totalWarnings: number;
+  lastBanLevel: number; // 0, 1, 2, 3 for no ban, first, second, perma
+};
+
+// Add a warning to a user
+export async function addWarning(
+  context: Devvit.Context | TriggerContext,
+  username: string,
+  warning: UserWarning
+): Promise<UserWarningRecord> {
+  const key = `warnings:${username}`;
+  const existing = await context.redis.get(key);
+  
+  let record: UserWarningRecord;
+  if (existing) {
+    record = JSON.parse(existing);
+  } else {
+    record = {
+      warnings: [],
+      totalWarnings: 0,
+      lastBanLevel: 0,
+    };
+  }
+  
+  record.warnings.push(warning);
+  record.totalWarnings++;
+  
+  // Clean up expired warnings (older than 90 days)
+  const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+  record.warnings = record.warnings.filter(w => w.timestamp > ninetyDaysAgo);
+  
+  await context.redis.set(key, JSON.stringify(record));
+  return record;
+}
+
+// Get user warnings
+export async function getUserWarnings(
+  context: Devvit.Context | TriggerContext,
+  username: string
+): Promise<UserWarningRecord> {
+  const key = `warnings:${username}`;
+  const existing = await context.redis.get(key);
+  
+  if (!existing) {
+    return {
+      warnings: [],
+      totalWarnings: 0,
+      lastBanLevel: 0,
+    };
+  }
+  
+  const record: UserWarningRecord = JSON.parse(existing);
+  
+  // Clean up expired warnings
+  const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+  record.warnings = record.warnings.filter(w => w.timestamp > ninetyDaysAgo);
+  
+  return record;
+}
+
+// Remove a warning (when content is reinstated)
+export async function removeWarning(
+  context: Devvit.Context | TriggerContext,
+  username: string,
+  contentId: string
+): Promise<void> {
+  const key = `warnings:${username}`;
+  const existing = await context.redis.get(key);
+  
+  if (!existing) return;
+  
+  const record: UserWarningRecord = JSON.parse(existing);
+  record.warnings = record.warnings.filter(
+    w => w.postId !== contentId && w.commentId !== contentId
+  );
+  
+  await context.redis.set(key, JSON.stringify(record));
+}
+
+// Check if user should be banned and return ban info
+export function checkBanThreshold(warningCount: number, lastBanLevel: number): {
+  shouldBan: boolean;
+  banDays: number | null;
+  banLevel: number;
+  message: string;
+} {
+  if (warningCount >= 26 && lastBanLevel < 3) {
+    return {
+      shouldBan: true,
+      banDays: null, // permanent
+      banLevel: 3,
+      message: "Permanently banned due to 26+ rule violations",
+    };
+  } else if (warningCount >= 12 && lastBanLevel < 2) {
+    return {
+      shouldBan: true,
+      banDays: 28,
+      banLevel: 2,
+      message: "Banned for 28 days due to 12+ rule violations",
+    };
+  } else if (warningCount >= 6 && lastBanLevel < 1) {
+    return {
+      shouldBan: true,
+      banDays: 7,
+      banLevel: 1,
+      message: "Banned for 7 days due to 6+ rule violations",
+    };
+  }
+  
+  return {
+    shouldBan: false,
+    banDays: 0,
+    banLevel: lastBanLevel,
+    message: "",
+  };
+}
+
+// Apply ban to user
+export async function applyBan(
+  context: Devvit.Context,
+  username: string,
+  subredditName: string,
+  banDays: number | null,
+  reason: string
+): Promise<void> {
+  try {
+    if (banDays === null) {
+      // Permanent ban
+      await context.reddit.banUser({
+        username,
+        subredditName,
+        reason,
+        note: "Automatic ban by ModShield bot",
+      });
+    } else {
+      // Temporary ban
+      await context.reddit.banUser({
+        username,
+        subredditName,
+        duration: banDays,
+        reason,
+        note: "Automatic ban by ModShield bot",
+      });
+    }
+    
+    // Update last ban level
+    const key = `warnings:${username}`;
+    const existing = await context.redis.get(key);
+    if (existing) {
+      const record: UserWarningRecord = JSON.parse(existing);
+      const banInfo = checkBanThreshold(record.warnings.length, record.lastBanLevel);
+      record.lastBanLevel = banInfo.banLevel;
+      await context.redis.set(key, JSON.stringify(record));
+    }
+  } catch (error) {
+    console.error(`Failed to ban user ${username}:`, error);
+  }
+}
+
+// Check if enough time has passed to send notification
+export async function canSendNotification(
+  context: Devvit.Context | TriggerContext,
+  username: string
+): Promise<boolean> {
+  const key = `last_notif:${username}`;
+  const lastNotif = await context.redis.get(key);
+  
+  if (!lastNotif) return true;
+  
+  const lastNotifTime = parseInt(lastNotif, 10);
+  const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
+  
+  return lastNotifTime < fiveDaysAgo;
+}
+
+// Mark that we sent a notification
+export async function markNotificationSent(
+  context: Devvit.Context | TriggerContext,
+  username: string
+): Promise<void> {
+  const key = `last_notif:${username}`;
+  await context.redis.set(key, Date.now().toString());
+}
+
+// Get warning counts (active and expired)
+export async function getWarningCounts(
+  context: Devvit.Context | TriggerContext,
+  username: string
+): Promise<{ active: number; expired: number; total: number }> {
+  const record = await getUserWarnings(context, username);
+  
+  const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+  const activeWarnings = record.warnings.filter(w => w.timestamp > ninetyDaysAgo);
+  const expiredCount = record.totalWarnings - activeWarnings.length;
+  
+  return {
+    active: activeWarnings.length,
+    expired: expiredCount > 0 ? expiredCount : 0,
+    total: record.totalWarnings,
+  };
+}
